@@ -1,0 +1,256 @@
+{
+  "name": "🤖Youtube Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        -140
+      ],
+      "id": "1b30f70e-8fa6-4003-bb55-2d90473459af",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# Role\nYour role is to conduct deep, insightful research on the given topic, uncovering key details, trends, and perspectives. The gathered information should be comprehensive enough to craft an engaging YouTube video—be it a tutorial, a news breakdown, or a reaction piece—ensuring both accuracy and audience captivation.\n\nWrite a complete report on the research that you performed."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -160,
+        -140
+      ],
+      "id": "f88f340c-d4e1-479a-9e0e-e69baae2d97d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        160
+      ],
+      "id": "6eb7ad4e-d2cb-44ee-914f-c67ea32a2419",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "01defPOIoBvIMk76",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Your role is to come up with a YouTube video script outline based on the provided query. The video can be news or a tutorial, based on the research.\n\nRespond with the following structure:\n\n# Hook\nA catchy one-sentence hook for the video in the form of a question or bold statement.\n\n# Intro\nThe intro for the video should be 2 or 3 sentences long and explain what the video is about and what the viewer is about to learn.\n\n# Body\nA bullet point list (short sentences) of the talking points.\n"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        200,
+        -140
+      ],
+      "id": "27ce52b2-c9b0-43ed-aa17-0548e5582c63",
+      "name": "Script Outline"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        80,
+        160
+      ],
+      "id": "360c0005-5c54-4c6f-b135-87f76cfce8ed",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "01defPOIoBvIMk76",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        360,
+        180
+      ],
+      "id": "0a59aa44-6de3-418d-8aeb-3836a8eb449b",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "01defPOIoBvIMk76",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Your role is to come up with high click-through rate title ideas based on the description of the video."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        560,
+        -140
+      ],
+      "id": "c03d254b-897c-4667-a4b2-295736fdd51d",
+      "name": "Title"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "77b571b4-0328-4b47-93dd-f2b2ed66e20e",
+              "name": "response",
+              "value": "=Possible Title:\n{{ $json.text }}\n\nScript Outline:\n\n{{ $('Script Outline').item.json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        -140
+      ],
+      "id": "5cc71928-b7c5-4161-a0e6-f00d066f5b59",
+      "name": "Response"
+    }
+  ],
+  "pinData": {
+    "Workflow Input Trigger": [
+      {
+        "json": {
+          "query": "Create a youtube video on RNN?"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Script Outline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Script Outline",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Script Outline": {
+      "main": [
+        [
+          {
+            "node": "Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Title",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Title": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b7046061-572f-4f8e-ad48-e70473012299",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "64a566eb40ce8e797dddb7446e6cc93e0b49c12d7083e0b6705c921b734990f1"
+  },
+  "id": "6ABS5qCBAhjWB8n7",
+  "tags": []
+}

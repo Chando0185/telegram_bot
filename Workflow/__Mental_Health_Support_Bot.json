@@ -1,0 +1,98 @@
+{
+  "name": "🤖Mental Health Support Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -260,
+        -100
+      ],
+      "id": "3a8bf86c-8aa5-49da-acfe-b4718359fd6f",
+      "name": "Workflow Input Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# Role\nYour role is to assist with mental health support based on the following details:\n\nMood/Emotion: [Anxiety, Stress, Sadness, etc.]\nCurrent Situation: [Job-related stress, family issues, personal concerns, etc.]\nPreferences: [Self-care strategies, relaxation exercises, mindfulness techniques, professional help]\nDesired Outcome: [Calming, Reassurance, Coping Mechanisms, Encouragement]\nDuration of Support: [Short-term (daily), Long-term (ongoing support)]\n\nProvide a tailored mental health plan with options for relaxation techniques, coping strategies, self-care activities, and professional resources. Include suggested activities or practices to help improve emotional well-being, alongside any relevant mental health tips. Summarize the mental health support plan for easy reference."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -40,
+        -100
+      ],
+      "id": "b0c0bfbb-6b11-4bbd-9edb-0ff3d525b654",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        120
+      ],
+      "id": "5826fb90-181a-4c24-9e05-31ba2df69cd2",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "01defPOIoBvIMk76",
+          "name": "Groq account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Workflow Input Trigger": [
+      {
+        "json": {
+          "query": "My girlfriend breakup with me."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Workflow Input Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "17bc7cad-529d-4777-9d73-386dadebce53",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "64a566eb40ce8e797dddb7446e6cc93e0b49c12d7083e0b6705c921b734990f1"
+  },
+  "id": "ZkENTi8pksvY0Mqt",
+  "tags": []
+}

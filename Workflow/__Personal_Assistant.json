@@ -1,0 +1,313 @@
+{
+  "name": "🤖Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -380,
+        -80
+      ],
+      "id": "b7e4228d-c4e7-45c3-8df2-1e06ab7c88ed",
+      "name": "Telegram Trigger",
+      "webhookId": "847f615e-c2ef-4c4e-ab85-837089803275",
+      "credentials": {
+        "telegramApi": {
+          "id": "aMCS2D65AOdnidBt",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are a helpful assistant called JARVIS.\nYou are talking with {{ $json.message.chat.first_name }}\n\n# Additional Information\nCurrent Date & Time: {{ $now }}\n\n# Tools Overview\nYou have access to the following tools.\n\n## Calculator\nPerform complex calculations, from basic arithmetic to advanced operations.\nUse it for quick calculations, financial budgeting, or solving mathematical problems.\n\n#mentalHealth\nProvide empathetic responses, self-care tips, relaxation exercises, and resources for mental well-being.\nUse it to manage emotions, practice mindfulness, and find resources for mental health improvement.\n\n#travelAgent\nUse it to create a personalized travel itinerary, find the best flight deals, discover unique destinations, and book accommodations seamlessly for an unforgettable journey.\n\n#youtubeAgent\nGuide in creating, editing, and optimizing YouTube videos, offering tips on scriptwriting, video editing, and content strategy.\nUse it for crafting video ideas, creating high-quality content, optimizing for search, and growing your YouTube audience.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -160,
+        -80
+      ],
+      "id": "0b3ed5fa-1eff-4ae9-9c6a-71c7aa11de24",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        180
+      ],
+      "id": "b84f5c8b-de28-453a-bf01-9c3e3a5a2cf2",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "01defPOIoBvIMk76",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.response }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        460,
+        -80
+      ],
+      "id": "8b4b8144-032f-4313-81cb-bfbbb31ab9df",
+      "name": "Telegram",
+      "credentials": {
+        "telegramApi": {
+          "id": "aMCS2D65AOdnidBt",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "652c83bc-be99-4b92-b043-eb75d362440f",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        -80
+      ],
+      "id": "cc08b312-cad5-4a82-bbe8-2b9dcaa8c94b",
+      "name": "Response"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        0,
+        180
+      ],
+      "id": "721d7c3e-75e0-4a4b-beda-c4586f808ed5",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "name": "mentalHealth",
+        "description": "Call this tools to manage emotions, practice mindfulness, and find resources for mental health improvement.",
+        "workflowId": {
+          "__rl": true,
+          "value": "ZkENTi8pksvY0Mqt",
+          "mode": "list",
+          "cachedResultName": "🤖Mental Health Support Bot"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        160,
+        180
+      ],
+      "id": "893d8e09-0d91-48b7-8c32-6725792dd8a0",
+      "name": "mentalHealth"
+    },
+    {
+      "parameters": {
+        "name": "travelAgent",
+        "description": "Call this tool to plan your next trip, compare flight prices, discover new destinations, and book accommodations.",
+        "workflowId": {
+          "__rl": true,
+          "value": "y34xGZfdmhVS5sT3",
+          "mode": "list",
+          "cachedResultName": "🤖Travel Planner Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        320,
+        180
+      ],
+      "id": "40ab947e-b4ba-4dbd-a3ec-724a7b376fb9",
+      "name": "travelAgent"
+    },
+    {
+      "parameters": {
+        "name": "youtubeAgent",
+        "description": "Call this tools to crafting video ideas, creating high-quality content, optimizing for search, and growing your YouTube audience.",
+        "workflowId": {
+          "__rl": true,
+          "value": "6ABS5qCBAhjWB8n7",
+          "mode": "list",
+          "cachedResultName": "🤖Youtube Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2,
+      "position": [
+        460,
+        180
+      ],
+      "id": "7a11a829-f78c-43c8-8187-9828c7994fd2",
+      "name": "youtubeAgent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        []
+      ]
+    },
+    "Response": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mentalHealth": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "travelAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "youtubeAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3f83955c-38c0-46b1-9522-6b200d79623d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "64a566eb40ce8e797dddb7446e6cc93e0b49c12d7083e0b6705c921b734990f1"
+  },
+  "id": "olvodtykHZ7uxgrr",
+  "tags": []
+}
