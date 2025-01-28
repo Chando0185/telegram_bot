@@ -21,7 +21,7 @@ n8n is an open-source, no-code/low-code platform that connects apps and automate
 
 Download n8n: https://n8n.io
 Telegram Bot API Docs: https://core.telegram.org/bots
-Example workflows: [Insert link if available]
+
 💬 Let me know in the comments if you have questions or need help!
 👍 Don’t forget to like, share, and subscribe for more no-code tutorials!
 
